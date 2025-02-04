@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">EchoJournal</string>
+    <string name="faces_icon">Faces Icon</string>
+    <string name="no_entries">No Entries</string>
+    <string name="start_recording">Start recording your first Echo</string>
+    <string name="top_app_bar_title">Your EchoJournal</string>
+    <string name="settings_icon">Settings Icon</string>
+    <string name="recording_your_memories">Recording your memories...</string>
+    <string name="check_button">Check Button</string>
+    <string name="close_icon">Close Icon</string>
+    <string name="pause_icon">Pause Icon</string>
+    <string name="new_entry">New Entry...</string>
+    <string name="hashtag_icon">Hashtag Icon</string>
+    <string name="topic">Topic</string>
+    <string name="edit_icon">Edit Icon</string>
+    <string name="add_description">Add Description</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="add_title">Add Title</string>
+    <string name="confirm">Confirm</string>
+    <string name="how_are_you_doing">How are you doing?</string>
+    <string name="stressed_icon">Stressed Mood Icon</string>
+    <string name="stressed">Stressed</string>
+    <string name="sad">Sad</string>
+    <string name="neutral">Neutral</string>
+    <string name="peaceful">Peaceful</string>
+    <string name="excited">Excited</string>
+    <string name="sad_icon">Sad Icon</string>
+    <string name="neutral_icon">Neutral Icon</string>
+    <string name="peaceful_icon">Peaceful Icon</string>
+    <string name="excited_icon">Excited Icon</string>
 </resources>
