@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jv23.echojournal.R
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesAction
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
 import com.jv23.echojournal.ui.theme.Close_Icon
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import com.jv23.echojournal.ui.theme.Pause_Icon

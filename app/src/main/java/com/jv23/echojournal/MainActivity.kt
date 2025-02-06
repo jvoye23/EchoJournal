@@ -22,14 +22,14 @@ import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jv23.echojournal.domain.audiorecorder.playback.AndroidAudioPlayer
 import com.jv23.echojournal.domain.audiorecorder.record.AndroidAudioRecorder
 import com.jv23.echojournal.presentation.core.components.AppTopAppBar
 import com.jv23.echojournal.di.MyViewModel
 import com.jv23.echojournal.navigation.AppNavigation
-import com.jv23.echojournal.navigation.rememberNavigationState
-import com.jv23.echojournal.presentation.screens.home.EntriesScreenRoot
+import com.jv23.echojournal.presentation.screens.entry.NewEntryViewModel
 import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import java.io.File
@@ -39,6 +39,9 @@ class MainActivity : ComponentActivity() {
     private val RECORD_AUDIO_PERMISSION_REQUEST_CODE = 123
 
     private val mainViewModel by viewModels<MainViewModel>()
+
+    private lateinit var entriesViewModel: EntriesViewModel
+    private lateinit var newEntryViewModel: NewEntryViewModel
 
     private val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
@@ -54,6 +57,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        entriesViewModel = ViewModelProvider(this).get(
+            EntriesViewModel::class.java
+        )
+
+        newEntryViewModel = ViewModelProvider(this).get(
+            NewEntryViewModel::class.java
+        )
+
         installSplashScreen().apply {
             setKeepOnScreenCondition{
                 !mainViewModel.isReady.value
@@ -93,7 +104,7 @@ class MainActivity : ComponentActivity() {
                     factory = EchoJournalApplication.container.myViewModelFactory
                 )
 
-                val navigationState = rememberNavigationState()
+
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppTopAppBar()
@@ -105,14 +116,17 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         application = Application()
                     )*/
-                    EntriesScreenRoot(
 
-                        viewModel = EntriesViewModel(
-                            application = application
-                        ),
-                        modifier = Modifier
-                            .padding(innerPadding)
+                    //EntriesScreenRoot(viewModel = EntriesViewModel(application = application), modifier = Modifier.padding(innerPadding))
+
+                    /*TestNavHost(
+                        modifier = Modifier.padding((innerPadding))
+                    )*/
+                    AppNavigation(
+                        modifier = Modifier.padding(innerPadding),
+
                     )
+
                 }
             }
         }
@@ -154,18 +168,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EchoJournalTheme {
-        Greeting("Android")
-    }
-}

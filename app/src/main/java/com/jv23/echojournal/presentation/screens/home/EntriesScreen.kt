@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.jv23.echojournal.presentation.screens.home
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.jv23.echojournal.R
 import com.jv23.echojournal.presentation.screens.home.components.AppFloatingActionButton
 import com.jv23.echojournal.presentation.core.components.AppTopAppBar
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesAction
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesState
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesState
 import com.jv23.echojournal.presentation.screens.home.components.AudioRecorderBottomSheet
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import com.jv23.echojournal.ui.theme.Faces_Icon
@@ -38,11 +39,11 @@ import com.jv23.echojournal.ui.theme.Faces_Icon
 
 @Composable
 fun EntriesScreenRoot(
+    onNavigateToNewEntryScreen: Unit,
+    viewModel: EntriesViewModel = EntriesViewModel(application =  Application()),
 
-    viewModel: EntriesViewModel,
-    modifier: Modifier = Modifier
 
-) {
+    ) {
     EntriesScreen(
         state = viewModel.state,
         onAction = viewModel::onAction

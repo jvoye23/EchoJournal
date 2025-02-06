@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jv23.echojournal.R
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesAction
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import com.jv23.echojournal.ui.theme.ExcitedMood_Icon
 import com.jv23.echojournal.ui.theme.NeutralMood_Icon

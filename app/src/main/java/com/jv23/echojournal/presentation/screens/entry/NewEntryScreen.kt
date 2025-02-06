@@ -30,9 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.jv23.echojournal.R
 import com.jv23.echojournal.presentation.core.components.AudioSeekBar
 import com.jv23.echojournal.domain.data_source.model.MoodType
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesAction
-import com.jv23.echojournal.presentation.screens.entry.handling.EntriesState
-import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
+import com.jv23.echojournal.presentation.screens.entry.handling.NewEntryAction
+import com.jv23.echojournal.presentation.screens.entry.handling.NewEntryState
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
+import com.jv23.echojournal.presentation.screens.home.handling.EntriesState
 import com.jv23.echojournal.ui.theme.Add_Icon
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import com.jv23.echojournal.ui.theme.Hashtag_Icon
@@ -45,10 +46,12 @@ import com.jv23.echojournal.ui.theme.SurfaceVariant
 
 @Composable
 fun NewEntryScreenRoot(
-    viewModel: EntriesViewModel,
-    modifier: Modifier = Modifier
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NewEntryViewModel = NewEntryViewModel(),
 
-) {
+
+    ) {
     NewEntryScreen(
         modifier = modifier,
         state = viewModel.state,
@@ -59,8 +62,8 @@ fun NewEntryScreenRoot(
 @Composable
 fun NewEntryScreen(
     modifier: Modifier,
-    state: EntriesState,
-    onAction: (EntriesAction) -> Unit
+    state: NewEntryState,
+    onAction: (NewEntryAction) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -205,9 +208,8 @@ fun EntryScreenPreview() {
     EchoJournalTheme {
         NewEntryScreen(
             modifier = Modifier,
-            state = EntriesState(
-                isEntriesListEmpty = false,
-                isRecording = true
+            state = NewEntryState(
+                isEveryFieldFilled = true
             ),
             onAction = {}
         )

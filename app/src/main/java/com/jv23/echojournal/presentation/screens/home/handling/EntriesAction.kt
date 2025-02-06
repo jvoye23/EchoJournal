@@ -1,4 +1,4 @@
-package com.jv23.echojournal.presentation.screens.entry.handling
+package com.jv23.echojournal.presentation.screens.home.handling
 
 sealed interface EntriesAction {
 

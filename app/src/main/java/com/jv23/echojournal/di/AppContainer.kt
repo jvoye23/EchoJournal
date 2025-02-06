@@ -7,5 +7,8 @@ interface AppContainer {
 
     val journalEntryRepository: JournalEntryRepository
     val myViewModelFactory: ViewModelProvider.Factory
+    val entriesViewModelFactory: ViewModelProvider.Factory
+    val newEntryViewModelFactory: ViewModelProvider.Factory
+
 
 }
