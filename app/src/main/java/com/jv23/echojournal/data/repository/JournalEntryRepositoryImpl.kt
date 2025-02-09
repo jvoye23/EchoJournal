@@ -23,4 +23,12 @@ class JournalEntryRepositoryImpl (
         return journalEntryDao.deleteJournalEntry(journalEntry.toJournalEntryDb())
     }
 
+    override suspend fun testDi(email: String, password: String) {
+        try {
+            println("Testing DI...")
+        } catch(e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }

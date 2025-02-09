@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.app.Application
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.security.identity.CredentialDataResult.Entries
 import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
@@ -22,7 +23,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jv23.echojournal.domain.audiorecorder.playback.AndroidAudioPlayer
 import com.jv23.echojournal.domain.audiorecorder.record.AndroidAudioRecorder
@@ -40,9 +40,6 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel by viewModels<MainViewModel>()
 
-    private lateinit var entriesViewModel: EntriesViewModel
-    private lateinit var newEntryViewModel: NewEntryViewModel
-
     private val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
     }
@@ -57,13 +54,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        entriesViewModel = ViewModelProvider(this).get(
-            EntriesViewModel::class.java
-        )
 
-        newEntryViewModel = ViewModelProvider(this).get(
-            NewEntryViewModel::class.java
-        )
+
 
         installSplashScreen().apply {
             setKeepOnScreenCondition{
@@ -98,32 +90,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+           /* val entriesViewModel = viewModel<EntriesViewModel>(
+                factory = EchoJournalApplication.container.entriesViewModelFactory
+            )
+            val newEntryViewModel = viewModel<NewEntryViewModel>(
+                factory = EchoJournalApplication.container.newEntryViewModelFactory
+            )*/
+
             EchoJournalTheme {
-
-                val manualViewModel = viewModel<MyViewModel>(
-                    factory = EchoJournalApplication.container.myViewModelFactory
-                )
-
-
-
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppTopAppBar()
                     requestRecordAudioPermission()
-                   /* AppNavigation(
-                        navigationState = navigationState,
-                        isDataLoaded = { false },
-                        modifier = Modifier
-                            .padding(innerPadding),
-                        application = Application()
-                    )*/
 
-                    //EntriesScreenRoot(viewModel = EntriesViewModel(application = application), modifier = Modifier.padding(innerPadding))
-
-                    /*TestNavHost(
-                        modifier = Modifier.padding((innerPadding))
-                    )*/
                     AppNavigation(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = Modifier.padding(innerPadding)
 
                     )
 

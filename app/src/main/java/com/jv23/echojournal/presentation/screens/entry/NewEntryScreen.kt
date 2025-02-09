@@ -14,24 +14,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jv23.echojournal.EchoJournalApplication
 import com.jv23.echojournal.R
 import com.jv23.echojournal.presentation.core.components.AudioSeekBar
 import com.jv23.echojournal.domain.data_source.model.MoodType
 import com.jv23.echojournal.presentation.screens.entry.handling.NewEntryAction
 import com.jv23.echojournal.presentation.screens.entry.handling.NewEntryState
+import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
 import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
 import com.jv23.echojournal.presentation.screens.home.handling.EntriesState
 import com.jv23.echojournal.ui.theme.Add_Icon
@@ -48,13 +55,15 @@ import com.jv23.echojournal.ui.theme.SurfaceVariant
 fun NewEntryScreenRoot(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NewEntryViewModel = NewEntryViewModel(),
-
-
+    viewModel: NewEntryViewModel = viewModel<NewEntryViewModel>(
+        factory = EchoJournalApplication.container.newEntryViewModelFactory)
     ) {
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     NewEntryScreen(
         modifier = modifier,
-        state = viewModel.state,
+        state = state,
         onAction = viewModel::onAction
     )
 }
@@ -100,12 +109,25 @@ fun NewEntryScreen(
                     )
 
                 }
-                Spacer(modifier = modifier.width(10.dp))
-                Text(
-                    modifier = modifier.align(Alignment.CenterVertically),
-                    text = stringResource(R.string.add_title),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = OutLineVariant
+                Spacer(modifier = modifier.width(12.dp))
+                BasicTextField(
+                    value = state.title,
+                    onValueChange = {onAction(NewEntryAction.OnTitleChange(it))
+                    },
+                    textStyle = MaterialTheme.typography.headlineLarge,
+                    decorationBox = {innerTextField ->
+                        Box(modifier = Modifier.weight(1f)
+                        ) {
+                            if (state.title.isBlank()){
+                                Text(
+                                    text = stringResource(R.string.add_title),
+                                    style = MaterialTheme.typography.headlineLarge,
+                                    color = OutLineVariant
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
                 )
             }
             Spacer(modifier = modifier.height(16.dp))
@@ -202,14 +224,14 @@ fun NewEntryScreen(
 
 }
 
-@Preview(showSystemUi = true)
+@Preview()
 @Composable
 fun EntryScreenPreview() {
     EchoJournalTheme {
         NewEntryScreen(
             modifier = Modifier,
             state = NewEntryState(
-                isEveryFieldFilled = true
+
             ),
             onAction = {}
         )

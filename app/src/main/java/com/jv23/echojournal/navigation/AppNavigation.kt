@@ -17,66 +17,41 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.jv23.echojournal.presentation.screens.entry.NewEntryScreen
 import com.jv23.echojournal.presentation.screens.entry.NewEntryScreenRoot
+import com.jv23.echojournal.presentation.screens.entry.NewEntryViewModel
 import com.jv23.echojournal.presentation.screens.home.EntriesScreenRoot
+import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
 import kotlinx.serialization.Serializable
 
 @Composable
 fun AppNavigation(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AppNavigationGraph.HomeScreen
+        startDestination = HomeScreen
     ) {
-        composable<AppNavigationGraph.HomeScreen> {
+        composable<HomeScreen> {
             EntriesScreenRoot(
-                onNavigateToNewEntryScreen = navController.navigate(AppNavigationGraph.NewEntryScreen(
-                    id = 1L, fileUri = "filePath"
-                ))
-            )
+                onNavigateToNewEntryScreen = {id, fileUri -> navController.navigate(
+                    NewEntryScreen(id, fileUri))
+                },
 
+            )
         }
-        composable<AppNavigationGraph.NewEntryScreen> {
+        composable<NewEntryScreen> {
             NewEntryScreenRoot(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                modifier = Modifier
+                modifier = Modifier,
 
             )
         }
     }
 }
-
-private fun NavGraphBuilder.journalGraph(navController: NavHostController) {
-    navigation<AppNavigationGraph>(startDestination = AppNavigationGraph.HomeScreen) {
-        composable<AppNavigationGraph.HomeScreen> {
-            EntriesScreenRoot(
-                onNavigateToNewEntryScreen = navController.navigate(AppNavigationGraph.NewEntryScreen(
-                    id = 1L, fileUri = "filePath"
-                ))
-            )
-
-        }
-        composable<AppNavigationGraph.NewEntryScreen> {
-            NewEntryScreenRoot(
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
-                modifier = Modifier
-
-            )
-        }
-    }
-}
-
-
-
-
-
-
 
 
 @Composable
@@ -122,12 +97,13 @@ fun TestNavHost(
 }
 
 @Serializable
-object EntriesScreen
-
-
+object HomeScreen
 
 @Serializable
-object NewEntryScreen
+data class NewEntryScreen(
+    val id: String,
+    val fileUri: String
+)
 
 @Serializable
 object TestHome

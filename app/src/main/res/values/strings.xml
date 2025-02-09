@@ -29,4 +29,8 @@
     <string name="neutral_icon">Neutral Icon</string>
     <string name="peaceful_icon">Peaceful Icon</string>
     <string name="excited_icon">Excited Icon</string>
+    <string name="recording_paused">Recording paused</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="mic_button">Mic Button</string>
 </resources>

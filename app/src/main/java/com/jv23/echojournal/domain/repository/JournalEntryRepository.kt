@@ -10,4 +10,6 @@ interface JournalEntryRepository {
     suspend fun upsertJournalEntry(journalEntry: JournalEntry)
 
     suspend fun deleteJournalEntry(journalEntry: JournalEntry)
+
+    suspend fun testDi(email: String, password: String)
 }
