@@ -8,9 +8,13 @@ import androidx.room.TypeConverters
 import com.jv23.echojournal.data.converter.InstantConverter
 import com.jv23.echojournal.data.converter.MoodTypeConverter
 import com.jv23.echojournal.data.converter.TopicsConverter
-import com.jv23.echojournal.data.entity.JournalEntryDb
+import com.jv23.echojournal.data.entity.JournalEntryEntityDb
+import com.jv23.echojournal.data.entity.TopicEntityDb
 
-@Database(entities = [JournalEntryDb::class], version = 1, exportSchema = false)
+@Database(entities = [JournalEntryEntityDb::class, TopicEntityDb::class],
+    version = 1,
+    exportSchema = false
+)
 @TypeConverters(MoodTypeConverter::class, TopicsConverter::class, InstantConverter::class)
 abstract class JournalEntryDatabase: RoomDatabase() {
 

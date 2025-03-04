@@ -5,6 +5,7 @@ import com.jv23.echojournal.di.AppContainer
 import com.jv23.echojournal.di.AppDataContainer
 import kotlinx.coroutines.CoroutineScope
 
+/*
 class EchoJournalApplication: Application(){
 
     companion object {
@@ -19,4 +20,4 @@ class EchoJournalApplication: Application(){
         )
     }
 
-}
+}*/

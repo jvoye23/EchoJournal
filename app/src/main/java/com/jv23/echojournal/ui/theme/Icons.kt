@@ -44,7 +44,7 @@ val UnselectedStressedMood_Icon: ImageVector
 
 val PeacefulMood_Icon: ImageVector
     @Composable
-    get() = ImageVector.vectorResource(id = R.drawable.icon_mood_sad)
+    get() = ImageVector.vectorResource(id = R.drawable.icon_mood_peaceful)
 
 val UnselectedPeacefulMood_Icon: ImageVector
     @Composable

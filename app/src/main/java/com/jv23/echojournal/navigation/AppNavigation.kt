@@ -1,5 +1,6 @@
 package com.jv23.echojournal.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,46 +9,47 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.jv23.echojournal.presentation.screens.entry.NewEntryScreen
+
 import com.jv23.echojournal.presentation.screens.entry.NewEntryScreenRoot
-import com.jv23.echojournal.presentation.screens.entry.NewEntryViewModel
 import com.jv23.echojournal.presentation.screens.home.EntriesScreenRoot
-import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
 import kotlinx.serialization.Serializable
+
+
+@Serializable
+data class NewEntryRoute(
+    val id: String,
+    val fileUri: String
+)
+
+@Serializable
+data object HomeRoute
 
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
-
-
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = HomeScreen
+        startDestination = HomeRoute
     ) {
-        composable<HomeScreen> {
+        composable<HomeRoute> {
             EntriesScreenRoot(
-                onNavigateToNewEntryScreen = {id, fileUri -> navController.navigate(
-                    NewEntryScreen(id, fileUri))
-                },
-
+                onNavigateToNewEntryScreen = { id, fileUri ->
+                    navController.navigate(NewEntryRoute(id, fileUri))
+                }
             )
         }
-        composable<NewEntryScreen> {
+        composable<NewEntryRoute> {
+            val route = it.toRoute<NewEntryRoute>()
+            Log.d("Route", "AppNavigation: ID = ${route.id}, FileURI = ${route.fileUri}")
             NewEntryScreenRoot(
-                onNavigateBack = {
-                    navController.navigateUp()
-                },
-                modifier = Modifier,
-
+                onNavigateBack = {navController.navigateUp()
+                }
             )
         }
     }
@@ -96,14 +98,7 @@ fun TestNavHost(
     }
 }
 
-@Serializable
-object HomeScreen
 
-@Serializable
-data class NewEntryScreen(
-    val id: String,
-    val fileUri: String
-)
 
 @Serializable
 object TestHome

@@ -1,0 +1,147 @@
+package com.jv23.echojournal.presentation.core.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.jv23.echojournal.presentation.core.utils.formatSecondsToHourMinuteSecond
+import kotlin.math.roundToInt
+
+data class MoodColors(
+    val primary: Color,
+    val secondary: Color,
+    val container: Color,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AudioPlayer(
+    isPlaying: Boolean,
+    curPlaybackInSeconds: Long,
+    maxPlaybackInSeconds: Long,
+    moodColors: MoodColors,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+    onValueChange: (Int) -> Unit = {},
+    playerRadius: Dp = 999.dp,
+    enableSlider: Boolean = false
+) {
+    var sliderValue by remember {
+        mutableFloatStateOf(0f)
+    }
+    var seekingNewValue by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(curPlaybackInSeconds, seekingNewValue) {
+        if (!seekingNewValue) {
+            sliderValue = curPlaybackInSeconds.toFloat()
+        }
+    }
+
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(playerRadius))
+            .background(moodColors.container)
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onToggle,
+            modifier = Modifier
+                .size(32.dp)
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(playerRadius))
+                .clip(RoundedCornerShape(playerRadius))
+                .background(Color.White)
+
+        ) {
+            Icon(
+                imageVector = if (isPlaying) {
+                    Icons.Default.PlayArrow
+                } else {
+                    Icons.Default.PlayArrow
+                },
+                contentDescription = null,
+                tint = moodColors.primary
+            )
+        }
+        Spacer(modifier = Modifier.width(6.dp))
+        Slider(
+            value = sliderValue,
+            onValueChange = {
+                seekingNewValue = true
+                sliderValue = it
+            },
+            onValueChangeFinished = {
+                seekingNewValue = false
+                onValueChange(sliderValue.roundToInt())
+            },
+            valueRange = 0f..(maxPlaybackInSeconds.toFloat()),
+            enabled = enableSlider,
+            thumb = {
+                SliderDefaults.Thumb(
+                    interactionSource = remember { MutableInteractionSource() },
+                    colors = SliderDefaults.colors(
+                        thumbColor = moodColors.primary
+                    ),
+                    modifier = Modifier.clip(CircleShape)
+                )
+            },
+            track = {
+                SliderDefaults.Track(
+                    sliderState = it,
+                    modifier = Modifier
+                        .height(4.dp),
+                    drawTick = { offset, color -> },
+                    drawStopIndicator = {},
+                    thumbTrackGapSize = 0.dp,
+                    trackInsideCornerSize = 0.dp,
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = moodColors.primary,
+                        inactiveTrackColor = moodColors.secondary
+                    )
+                )
+            },
+            modifier = Modifier
+                .weight(1f)
+                .heightIn(max = 8.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = "${formatSecondsToHourMinuteSecond(curPlaybackInSeconds)}/${formatSecondsToHourMinuteSecond(maxPlaybackInSeconds)}",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(end = 4.dp)
+        )
+    }
+}

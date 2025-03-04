@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.jv23.echojournal.EchoJournalApplication
 import com.jv23.echojournal.R
 import com.jv23.echojournal.presentation.screens.home.components.AppFloatingActionButton
 import com.jv23.echojournal.presentation.core.components.AppTopAppBar
@@ -46,19 +45,18 @@ import com.jv23.echojournal.ui.theme.Faces_Icon
 fun EntriesScreenRoot(
     onNavigateToNewEntryScreen: (id: String, fileUri: String) -> Unit,
     viewModel: EntriesViewModel = viewModel<EntriesViewModel>(
-        factory = EchoJournalApplication.container.entriesViewModelFactory)
+        factory = EntriesViewModel.Factory)
     ) {
         val context = LocalContext.current
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         ObserveAsEvents(viewModel.events) { entriesEvent ->
             when(entriesEvent) {
-                is EntriesEvent.NewEntryError -> {
-                    context.showToastStr(entriesEvent.text)
-
-                }
                 is EntriesEvent.NewEntrySuccess -> {
                     onNavigateToNewEntryScreen(entriesEvent.id, entriesEvent.fileUri)
+                }
+                is EntriesEvent.NewEntryError -> {
+                    context.showToastStr(entriesEvent.text)
                 }
             }
         }
@@ -88,77 +86,44 @@ private fun EntriesScreen(
                 modifier = Modifier,
                 onClick = {
                     //isSheetOpen = true
-
-                    onAction(EntriesAction.OnRecord)
-                    state.copy(
-                        isAudioRecorderBottomSheetOpened = true
-                    )
+                    onAction(EntriesAction.OnToggleAudioRecorderBottomSheet)
+                    onAction(EntriesAction.OnToggleRecord)
 
                 }
             )
         },
-        floatingActionButtonPosition = FabPosition.End
+        floatingActionButtonPosition = FabPosition.End,
+        topBar = {AppTopAppBar(
+            title = stringResource(R.string.top_app_bar_title),
+            onBackClick = {}
+        )}
     ) { contentPadding ->
 
-        AppTopAppBar()
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-        ) {
-            Column (
+        if (state.isEntriesListEmpty){
+            EmptyEntriesList(
+                modifier = Modifier.padding(contentPadding)
+            )
+        } else {
+            Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(contentPadding),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
 
-                ) {
-                Image(
-                    imageVector = Faces_Icon,
-                    contentDescription = stringResource(id = R.string.faces_icon),
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+            ) {
                 Text(
-                    text = stringResource(id = R.string.no_entries),
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "this is not an empty list"
                 )
-                Text(
-                    text = stringResource(id = R.string.start_recording),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                Spacer(modifier = Modifier.height(50.dp))
-                Button(
-                    onClick = {
-                        onAction(EntriesAction.OnTestDiClick)
-
-                    }
-                ) {
-                    Text(text = "Test DI")
-                }
-
-                /*val categories = listOf("Work", "Hobby", "Finance", "Home")
-                EntryCard(
-                    modifier = Modifier
-                        .padding(start = 12.dp),
-                    moodType = MoodType.PeacefulMood,
-                    title = "Mein Journal",
-                    timeOfRecord = "18:59",
-                    audioLogDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tit amet, consectetur adipiscing elit, sed t... Show more",
-                    categories = categories
-                )*/
-
-
             }
+
         }
 
         if(state.isAudioRecorderBottomSheetOpened) {
             ModalBottomSheet(
                 sheetState = sheetState,
                 onDismissRequest = {
-                    state.copy(
-                        isAudioRecorderBottomSheetOpened = false
-                    )
+                    onAction(EntriesAction.OnToggleAudioRecorderBottomSheet)
                 }
             ) {
                 AudioRecorderBottomSheet(
@@ -173,14 +138,45 @@ private fun EntriesScreen(
     }
 }
 
+@Composable
+fun EmptyEntriesList(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+
+            ) {
+            Image(
+                imageVector = Faces_Icon,
+                contentDescription = stringResource(id = R.string.faces_icon),
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = stringResource(id = R.string.no_entries),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Text(
+                text = stringResource(id = R.string.start_recording),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+    
+}
+
 @Preview()
 @Composable
 private fun EntriesScreenPreview() {
     EchoJournalTheme {
         EntriesScreen(
-            state = EntriesState(
-
-            ),
+            state = EntriesState(),
             onAction = {}
         )
     }

@@ -1,13 +1,14 @@
 package com.jv23.echojournal.presentation.screens.home.handling
 
-import com.jv23.echojournal.domain.entity.JournalEntry
+
+import com.jv23.echojournal.domain.entity.JournalEntryEntity
 
 sealed interface EntriesAction {
 
-    data class OnPLayJournalEntry(val journalEntry: JournalEntry)
+    data class OnPLayJournalEntry(val journalEntry: JournalEntryEntity)
     data object OnFinishRecordingClick: EntriesAction
 
-    data object OnRecord: EntriesAction
+    data object OnToggleRecord: EntriesAction
     data object OnPauseClick: EntriesAction
     data object OnCancelClick: EntriesAction
     data object OnResumeClick: EntriesAction
@@ -16,4 +17,5 @@ sealed interface EntriesAction {
     data object OnSelectMoodIcon: EntriesAction
     data object OnTestDiClick: EntriesAction
     data object OnToggleRecording: EntriesAction
+   data object OnToggleAudioRecorderBottomSheet: EntriesAction
 }

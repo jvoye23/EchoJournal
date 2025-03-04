@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -90,6 +91,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            requestRecordAudioPermission()
            /* val entriesViewModel = viewModel<EntriesViewModel>(
                 factory = EchoJournalApplication.container.entriesViewModelFactory
             )
@@ -98,16 +100,26 @@ class MainActivity : ComponentActivity() {
             )*/
 
             EchoJournalTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppTopAppBar()
+
+                AppNavigation()
+
+                /*Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    //topBar = { AppTopAppBar()}
+                ) { paddingValue ->
+                    //AppTopAppBar()
                     requestRecordAudioPermission()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValue)
+                    ) {
+                        AppNavigation()
+                    }
 
-                    AppNavigation(
-                        modifier = Modifier.padding(innerPadding)
 
-                    )
 
-                }
+                }*/
             }
         }
     }

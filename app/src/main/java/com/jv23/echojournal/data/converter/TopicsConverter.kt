@@ -1,6 +1,7 @@
 package com.jv23.echojournal.data.converter
 
 import androidx.room.TypeConverter
+import kotlinx.serialization.json.Json
 
 class TopicsConverter {
 
@@ -12,5 +13,16 @@ class TopicsConverter {
     @TypeConverter
     fun toTopicsList(data: String): List<String> {
         return data.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+
+    @TypeConverter
+    fun setToString(value: Set<String>): String {
+        return Json.encodeToString(value)
+    }
+
+    @TypeConverter
+    fun stringToSet(value: String): Set<String> {
+        return Json.decodeFromString<Set<String>>(value)
     }
 }

@@ -2,12 +2,19 @@ package com.jv23.echojournal.presentation.screens.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.jv23.echojournal.core.FileManager
+import com.jv23.echojournal.di.MyApplication
 import com.jv23.echojournal.domain.audiorecorder.playback.AudioPlayer
 import com.jv23.echojournal.domain.audiorecorder.record.AudioRecorder
-import com.jv23.echojournal.domain.entity.JournalEntry
+import com.jv23.echojournal.domain.entity.JournalEntryEntity
+
 import com.jv23.echojournal.domain.repository.JournalEntryRepository
+import com.jv23.echojournal.presentation.screens.entry.NewEntryViewModel
 import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
 import com.jv23.echojournal.presentation.screens.home.handling.EntriesEvent
 import com.jv23.echojournal.presentation.screens.home.handling.EntriesState
@@ -26,6 +33,35 @@ class EntriesViewModel(
     private val fileManager: FileManager,
     private val journalEntryRepository: JournalEntryRepository
 ): ViewModel() {
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras: CreationExtras
+            ): T {
+                val application = checkNotNull(extras[APPLICATION_KEY]) as MyApplication
+                val journalEntryRepository = application.journalEntryRepository
+                val fileManager = application.fileManager
+                val audioPlayer = application.audioPlayer
+                val audioRecorder = application.audioRecorder
+                val context = application.context
+
+                return EntriesViewModel(
+                    journalEntryRepository = journalEntryRepository,
+
+                    fileManager = fileManager,
+                    audioPlayer = audioPlayer,
+                    context = context,
+                    audioRecorder = audioRecorder
+                ) as T
+            }
+
+        }
+    }
+
+
 
     private val appContext = context
 
@@ -46,7 +82,7 @@ class EntriesViewModel(
        AndroidAudioPlayer(appContext)
     }*/
 
-    private val _entries = journalEntryRepository.getJournalEntries()
+    private val _entries = journalEntryRepository.getAllJournalEntries()
 
     // File Dir
     private var newEntryId: String? = null
@@ -55,7 +91,7 @@ class EntriesViewModel(
     // Cache Dir
     private var audioFile: File? = null
 
-    private val _currentEntryPlaying = MutableStateFlow<JournalEntry?>(null)
+    private val _currentEntryPlaying = MutableStateFlow<JournalEntryEntity?>(null)
     private val _isPlaying = MutableStateFlow(false)
 
     fun testingDI(){
@@ -71,7 +107,7 @@ class EntriesViewModel(
 
     fun onAction(action: EntriesAction) {
         when(action) {
-            is EntriesAction.OnRecord -> {
+            is EntriesAction.OnToggleRecord -> {
                 /*if (!_state.value.canRecord){
                     return
                 }*/
@@ -87,7 +123,15 @@ class EntriesViewModel(
                     }
                     newEntryId = UUID.randomUUID().toString()
                     audioRecorder.start(newEntryId.orEmpty())
-                } else return
+                } else {
+                    val shouldRecord = !_state.value.isRecording
+                    _state.update { it.copy(isRecording = shouldRecord) }
+                    if (shouldRecord) {
+                        audioRecorder.resume()
+                    } else {
+                        audioRecorder.pause()
+                    }
+                }
             }
 
             EntriesAction.OnCancelClick -> {
@@ -111,7 +155,8 @@ class EntriesViewModel(
                     // Get the uri of the created recording file.
                     newEntryUri = audioRecorder.stop().also {
                         if (it.isBlank()) {
-                            //Error Event
+                            _eventChannel.send(EntriesEvent.NewEntryError("Error occured when creating the audio file"))
+                            return@launch
                         }
                     }// Reset the state, close the bottom sheet
                     _state.update {
@@ -145,6 +190,23 @@ class EntriesViewModel(
             EntriesAction.OnSelectMoodIcon -> TODO()
             EntriesAction.OnTestDiClick -> {testingDI()}
             EntriesAction.OnToggleRecording -> TODO()
+
+
+            EntriesAction.OnToggleAudioRecorderBottomSheet -> {
+                if (state.value.isAudioRecorderBottomSheetOpened){
+                    state.update {
+                        it.copy(
+                            isAudioRecorderBottomSheetOpened = false
+                        )
+                    }
+                } else {
+                    state.update {
+                        it.copy(
+                            isAudioRecorderBottomSheetOpened = true
+                        )
+                    }
+                }
+            }
         }
 
     }

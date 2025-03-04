@@ -43,12 +43,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun AudioRecorderBottomSheet(
     modifier: Modifier = Modifier,
-
     durationInSeconds: Long,
-    /*onToggleRecording: () -> Unit,
-    onPausePlay: () -> Unit,
-    onCancelRecording: () -> Unit,
-    onFinishRecording: () -> Unit,*/
     state: EntriesState,
     onAction: (EntriesAction) -> Unit
 ){

@@ -1,5 +1,7 @@
 package com.jv23.echojournal.di
 
+
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import com.jv23.echojournal.core.FileManager
 import com.jv23.echojournal.domain.audiorecorder.playback.AudioPlayer
@@ -13,6 +15,8 @@ interface AppContainer {
     val audioRecorder: AudioRecorder
     val fileManager: FileManager
     val entriesViewModelFactory: ViewModelProvider.Factory
-    val newEntryViewModelFactory: ViewModelProvider.Factory
+   // val newEntryViewModelFactory: ViewModelProvider.Factory
+
+
 
 }

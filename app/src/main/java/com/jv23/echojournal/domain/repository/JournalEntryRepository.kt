@@ -1,15 +1,21 @@
 package com.jv23.echojournal.domain.repository
 
-import com.jv23.echojournal.domain.entity.JournalEntry
+import com.jv23.echojournal.domain.entity.JournalEntryEntity
 import kotlinx.coroutines.flow.Flow
 
 interface JournalEntryRepository {
 
-    fun getJournalEntries(): Flow<List<JournalEntry>>
+    fun getAllJournalEntries(): Flow<List<JournalEntryEntity>>
 
-    suspend fun upsertJournalEntry(journalEntry: JournalEntry)
+    suspend fun upsertJournalEntry(journalEntry: JournalEntryEntity)
 
-    suspend fun deleteJournalEntry(journalEntry: JournalEntry)
+    suspend fun deleteJournalEntryById(id: String)
+
+    suspend fun deleteAllJournalEntries()
+
+    suspend fun upsertTopic(name: String)
+
+    fun getAllTopics(): Flow<Set<String>>
 
     suspend fun testDi(email: String, password: String)
 }

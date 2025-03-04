@@ -39,6 +39,7 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-core-animation = { group = "androidx.core", name = "core-animation", version.ref = "coreAnimation" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-core = { group = "androidx.room", name = "room-ktx", version.ref = "room" }

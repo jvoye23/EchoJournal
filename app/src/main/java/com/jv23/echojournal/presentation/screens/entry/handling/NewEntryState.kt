@@ -1,11 +1,12 @@
 package com.jv23.echojournal.presentation.screens.entry.handling
 
+import com.jv23.echojournal.domain.data_source.model.Mood
 import com.jv23.echojournal.domain.data_source.model.MoodType
 
 data class NewEntryState(
     val title: String = "",
     val description: String = "",
-    val selectedMood: MoodType? = null,
+    val selectedMood: Mood? = null,
     val isSelectMoodBottomSheetOpened: Boolean = false,
     val canSave: Boolean = false,
     val isPlaying: Boolean = false,

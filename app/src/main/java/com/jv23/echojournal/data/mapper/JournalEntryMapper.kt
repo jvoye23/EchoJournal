@@ -1,30 +1,32 @@
 package com.jv23.echojournal.data.mapper
 
-import com.jv23.echojournal.data.entity.JournalEntryDb
-import com.jv23.echojournal.domain.entity.JournalEntry
 
-fun JournalEntry.toJournalEntryDb(): JournalEntryDb = JournalEntryDb(
+import com.jv23.echojournal.data.entity.JournalEntryEntityDb
+import com.jv23.echojournal.domain.data_source.model.Mood
+import com.jv23.echojournal.domain.entity.JournalEntryEntity
+import com.jv23.echojournal.presentation.core.utils.toLocalDateTime
+import com.jv23.echojournal.presentation.core.utils.toMillis
+
+fun JournalEntryEntity.toJournalEntryEntityDb(): JournalEntryEntityDb = JournalEntryEntityDb(
     id = id,
+    mood = mood.ordinal ,
     title = title,
-    moodType = moodType,
-    audioFilePath = audioFilePath,
-    audioDuration = audioDuration,
-    amplitudeLogFilePath = amplitudeLogFilePath,
     description = description,
-    topics = topics,
-    created = created
+    recordingUri = recordingUri,
+    maxPlaybackInSeconds = maxPlaybackInSeconds,
+    dateTimeCreated = dateTimeCreated.toMillis(),
+    topics = topics
 )
 
-fun JournalEntryDb.toJournalEntry(): JournalEntry = JournalEntry(
+fun JournalEntryEntityDb.toJournalEntryEntity(): JournalEntryEntity = JournalEntryEntity(
     id = id,
+    mood = Mood.entries[mood] ,
     title = title,
-    moodType = moodType,
-    audioFilePath = audioFilePath,
-    audioDuration = audioDuration,
-    amplitudeLogFilePath = amplitudeLogFilePath,
     description = description,
-    topics = topics,
-    created = created
+    recordingUri = recordingUri,
+    maxPlaybackInSeconds = maxPlaybackInSeconds,
+    dateTimeCreated = dateTimeCreated.toLocalDateTime(),
+    topics = topics
 )
 
-fun List<JournalEntryDb>.toJournalEntries(): List<JournalEntry> = map { it.toJournalEntry() }
+fun List<JournalEntryEntityDb>.toJournalEntries(): List<JournalEntryEntity> = map { it.toJournalEntryEntity() }
