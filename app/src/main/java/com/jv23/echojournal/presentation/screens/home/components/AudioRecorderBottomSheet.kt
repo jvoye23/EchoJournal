@@ -28,8 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jv23.echojournal.R
 import com.jv23.echojournal.presentation.core.utils.formatSecondsToHourMinuteSecond
-import com.jv23.echojournal.presentation.screens.home.handling.EntriesAction
-import com.jv23.echojournal.presentation.screens.home.handling.EntriesState
 import com.jv23.echojournal.ui.theme.Close_Icon
 import com.jv23.echojournal.ui.theme.EchoJournalTheme
 import com.jv23.echojournal.ui.theme.Mic_Icon
@@ -42,19 +40,22 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AudioRecorderBottomSheet(
-    modifier: Modifier = Modifier,
+    hasStartedRecording: Boolean,
+    isRecording: Boolean,
     durationInSeconds: Long,
-    state: EntriesState,
-    onAction: (EntriesAction) -> Unit
+    onToggleRecording: () -> Unit,
+    onPauseRecording: () -> Unit,
+    onCancelRecording: () -> Unit,
+    onFinishRecording: () -> Unit
 ){
     Column(
-        modifier = modifier
+        modifier = Modifier
             .width(412.dp),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .width(288.dp),
 
             horizontalArrangement = Arrangement.Center
@@ -62,17 +63,23 @@ fun AudioRecorderBottomSheet(
 
         ) {
             Text(
-                text = if (state.isRecording){
+                text = if (!isRecording){
                     stringResource(R.string.recording_your_memories)
-                } else stringResource(R.string.recording_paused),
-                modifier = Modifier,
+                } else {
+                    if(hasStartedRecording){
+                        stringResource(R.string.recording_paused)
+                    } else {
+                        stringResource(R.string.recording_not_started_yet)
+                    }
+                },
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier,
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .width(288.dp),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -84,58 +91,58 @@ fun AudioRecorderBottomSheet(
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row (
-            modifier = modifier
+            modifier = Modifier
                 .width(300.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-
-                modifier = modifier
-                    .clickable { onAction(EntriesAction.OnCancelClick) }
+                modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.errorContainer),
+                    .background(MaterialTheme.colorScheme.errorContainer)
+                    .clickable { onCancelRecording() },
                 contentAlignment = Alignment.Center
 
             ) {
                 Icon(
                     imageVector = Close_Icon,
                     contentDescription = stringResource(R.string.close_icon),
-                    modifier = modifier
+                    modifier = Modifier
                         .size(24.dp),
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
 
             }
 
-            if (state.isRecording){
-                RecordingSaveButton(onAction = onAction)
+            if (!hasStartedRecording){
+                RecordingSaveButton(
+                    onToggle = { onToggleRecording() },
+
+                )
             } else {
                 ContinueRecordingButton(
-                    onAction = onAction,
-                    state = state,
-                    modifier = Modifier
+                    onToggle = {
+                        onFinishRecording()
+                    }
                 )
             }
             Box(
-                modifier = modifier
-                    .clickable {
-                        onAction(EntriesAction.OnPauseClick)
-                        state.copy(
-                            isRecording = false
-                        )
-                    }
+                modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFEEF0FF)),
+                    .background(Color(0xFFEEF0FF))
+                    .clickable(
+                        enabled = hasStartedRecording
+                    ) {
+                       onPauseRecording()
+                    },
                 contentAlignment = Alignment.Center
-
             ) {
                 Icon(
-                    imageVector = if(state.isRecording) Pause_Icon else Icons.Filled.Check,
+                    imageVector = if(isRecording) Pause_Icon else Icons.Filled.Check,
                     contentDescription = stringResource(R.string.pause_icon),
-                    modifier = modifier
+                    modifier = Modifier
                         .size(24.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -147,12 +154,10 @@ fun AudioRecorderBottomSheet(
 
 @Composable
 fun ContinueRecordingButton(
-    state: EntriesState,
-    onAction: (EntriesAction) -> Unit,
-    modifier: Modifier = Modifier
+    onToggle: () -> Unit
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .size(72.dp) // Adjust the size as needed
             .clip(CircleShape)
             .background(
@@ -169,10 +174,7 @@ fun ContinueRecordingButton(
                 )
             )
             .clickable {
-                onAction(EntriesAction.OnResumeClick)
-                state.copy(
-                    isRecording = true
-                )
+                onToggle()
 
             },
         contentAlignment = Alignment.Center // Center the icon
@@ -181,7 +183,7 @@ fun ContinueRecordingButton(
             imageVector = Mic_Icon,
             contentDescription = stringResource(R.string.mic_button),
             tint = Color.White,
-            modifier = modifier
+            modifier = Modifier
                 .size(32.dp)
         )
     }
@@ -190,32 +192,30 @@ fun ContinueRecordingButton(
 
 @Composable
 fun RecordingSaveButton(
-    onAction: (EntriesAction) -> Unit,
-    modifier: Modifier = Modifier,
+    onToggle: () -> Unit
    // color: Color = Color (0xFF578CFF),
 
 ){
     Box(
-        modifier = modifier
+        modifier = Modifier
     ) {
         Box (
-            modifier = modifier
+            modifier = Modifier
                 .size(128.dp)
                 .clip(CircleShape)
                 .background(Primary95),
             contentAlignment = Alignment.Center
         ){
             Box (
-                modifier = modifier
+                modifier = Modifier
                     .size(108.dp)
                     .clip(CircleShape)
                     .background(Primary90),
                 contentAlignment = Alignment.Center
 
-
             ) {
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .size(72.dp) // Adjust the size as needed
                         .clip(CircleShape)
                         .background(
@@ -232,7 +232,7 @@ fun RecordingSaveButton(
                             )
                         )
                         .clickable {
-                            onAction(EntriesAction.OnFinishRecordingClick)
+                            onToggle()
 
                         },
                     contentAlignment = Alignment.Center // Center the icon
@@ -241,7 +241,7 @@ fun RecordingSaveButton(
                         imageVector = Icons.Filled.Check,
                         contentDescription = stringResource(R.string.check_button),
                         tint = Color.White,
-                        modifier = modifier
+                        modifier = Modifier
                             .size(32.dp)
                     )
                 }
@@ -259,19 +259,13 @@ fun RecordingSaveButton(
 private fun AudioRecorderBottomSheetPreview(){
     EchoJournalTheme {
         AudioRecorderBottomSheet(
-            modifier = Modifier,
-
-
             durationInSeconds = (1.hours + 45.minutes + 24.seconds).inWholeSeconds,
-            /* onToggleRecording = {},
-            onPausePlay = {},
+            hasStartedRecording = false,
+            isRecording = false,
+            onToggleRecording = {},
+            onPauseRecording = {},
             onCancelRecording = {},
-            onFinishRecording = {},*/
-            onAction = {},
-
-            state = EntriesState(
-
-            )
+            onFinishRecording = {},
         )
 
     }

@@ -20,7 +20,7 @@ import androidx.room.util.query
 import com.jv23.echojournal.core.FileManager
 import com.jv23.echojournal.di.AppContainer
 import com.jv23.echojournal.di.AppDataContainer
-import com.jv23.echojournal.di.MyApplication
+//import com.jv23.echojournal.di.MyApplication
 import com.jv23.echojournal.domain.audiorecorder.playback.AudioPlayer
 import com.jv23.echojournal.domain.audiorecorder.record.AudioRecorder
 import com.jv23.echojournal.domain.entity.JournalEntryEntity
@@ -54,7 +54,7 @@ class NewEntryViewModel(
     val savedStateHandle: SavedStateHandle
     ): ViewModel() {
 
-    companion object {
+    /*companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -75,7 +75,7 @@ class NewEntryViewModel(
                 ) as T
             }
         }
-    }
+    }*/
 
     private val args = savedStateHandle.toRoute<NewEntryRoute>()
     private val fileUri = args.fileUri

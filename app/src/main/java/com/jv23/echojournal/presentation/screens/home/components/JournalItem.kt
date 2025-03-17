@@ -56,7 +56,7 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun JournalItem(
+fun JournalItem(
     item: JournalEntryEntity,
     index: Int,
     isLastItem: Boolean,
@@ -173,7 +173,7 @@ private fun JournalItem(
                     .semantics {
                         this.contentDescription = item.description
                     },
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.primary,
                 onTextLayout = {
                     if (!showMore && it.hasVisualOverflow) {
                         expandable = true

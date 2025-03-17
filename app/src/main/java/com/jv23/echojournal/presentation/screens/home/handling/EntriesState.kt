@@ -14,7 +14,10 @@ data class EntriesState(
     val currentFilePlaying: String? = null,
     val isPlaying: Boolean = false,
     val curPlaybackInSeconds: Long = 0,
-    val isEntriesListEmpty: Boolean = true
+    val isEntriesListEmpty: Boolean = true,
+    val isLoading: Boolean = false
+
+
 
    // val filteredTopics: JournalFilterType.Topics = JournalFilterType.Topics(emptySet()),
     //val filteredMoods: JournalFilterType.Moods = getMoodsFilterType()

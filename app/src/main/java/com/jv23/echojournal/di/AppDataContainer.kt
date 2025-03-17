@@ -4,8 +4,6 @@ package com.jv23.echojournal.di
 import android.content.Context
 
 import androidx.lifecycle.ViewModelProvider
-
-
 import com.jv23.echojournal.core.AndroidFileManager
 import com.jv23.echojournal.core.FileManager
 import com.jv23.echojournal.data.database.JournalEntryDatabase
@@ -17,16 +15,17 @@ import com.jv23.echojournal.domain.audiorecorder.record.AudioRecorder
 import com.jv23.echojournal.domain.repository.JournalEntryRepository
 import com.jv23.echojournal.presentation.screens.entry.NewEntryViewModel
 import com.jv23.echojournal.presentation.screens.home.EntriesViewModel
-import kotlinx.coroutines.CoroutineScope
 
 class AppDataContainer(
     private val appContext: Context,
-): AppContainer {
+) : AppContainer {
 
     override val journalEntryRepository:
             JournalEntryRepository by lazy {
-                JournalEntryRepositoryImpl(JournalEntryDatabase
-                    .getDatabase(appContext).getJournalEntryDao())
+        JournalEntryRepositoryImpl(
+            JournalEntryDatabase
+                .getDatabase(appContext).getJournalEntryDao()
+        )
 
     }
     override val audioPlayer: AudioPlayer
@@ -38,8 +37,18 @@ class AppDataContainer(
     override val fileManager: FileManager
         get() = AndroidFileManager(appContext)
 
+    override val newEntryViewModelFactory: ViewModelProvider.Factory
+        get() = viewModelFactory { savedStateHandle ->
+            NewEntryViewModel(
+                journalEntryRepository = journalEntryRepository,
+                audioPlayer = audioPlayer,
+                fileManager = fileManager,
+                savedStateHandle = savedStateHandle
+            )
+        }
+
     override val entriesViewModelFactory: ViewModelProvider.Factory
-        get() = viewModelFactory { saveStatehandle ->
+        get() = viewModelFactory {
             EntriesViewModel(
                 context = appContext,
                 journalEntryRepository = journalEntryRepository,
@@ -49,42 +58,4 @@ class AppDataContainer(
 
             )
         }
-    /*override val newEntryViewModelFactory: ViewModelProvider.Factory
-        get() {
-            val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    val savedStateHandle = extras.createSavedStateHandle()
-
-                    return NewEntryViewModel(
-                        journalEntryRepository = journalEntryRepository,
-                        audioPlayer = audioPlayer,
-                        fileManager = fileManager,
-                        savedStateHandle = savedStateHandle
-                    ) as T
-
-                }
-
-            }
-
-        }*/
-
-
-
-
-
-   /*override val newEntryViewModelFactory: ViewModelProvider.Factory
-        get() = viewModelFactory {
-
-            NewEntryViewModel(
-                journalEntryRepository = journalEntryRepository,
-                audioPlayer = audioPlayer,
-                fileManager = fileManager,
-                savedStateHandle = savedStateHandle
-            )
-        }*/
-
 }

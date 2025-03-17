@@ -12,6 +12,7 @@ import com.jv23.echojournal.domain.audiorecorder.record.AndroidAudioRecorder
 import com.jv23.echojournal.domain.audiorecorder.record.AudioRecorder
 import com.jv23.echojournal.domain.repository.JournalEntryRepository
 
+/*
 class MyApplication(
 
 ): Application() {
@@ -35,4 +36,4 @@ class MyApplication(
     val audioRecorder: AudioRecorder
         get() = AndroidAudioRecorder(this.applicationContext)
 
-}
+}*/

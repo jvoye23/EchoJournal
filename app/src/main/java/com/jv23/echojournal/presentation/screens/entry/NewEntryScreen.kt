@@ -56,8 +56,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jv23.echojournal.EchoJournalApplication
 
 import com.jv23.echojournal.R
+import com.jv23.echojournal.di.AppContainer
+import com.jv23.echojournal.di.AppDataContainer
 import com.jv23.echojournal.presentation.core.components.AudioSeekBar
 import com.jv23.echojournal.domain.data_source.model.MoodType
 import com.jv23.echojournal.presentation.core.components.AppTopAppBar
@@ -85,8 +88,8 @@ import kotlinx.coroutines.launch
 fun NewEntryScreenRoot(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NewEntryViewModel = viewModel<NewEntryViewModel>(
-        factory = NewEntryViewModel.Factory)
+    viewModel: NewEntryViewModel = viewModel<NewEntryViewModel>(factory = EchoJournalApplication.container.newEntryViewModelFactory)
+    //viewModel: NewEntryViewModel = viewModel<NewEntryViewModel>(factory = NewEntryViewModel.Factory)
     ) {
 
     val context = LocalContext.current
@@ -98,11 +101,11 @@ fun NewEntryScreenRoot(
                 context.showToastStr(event.error)
             }
             NewEntryEvent.NavigateBack -> {
-                onNavigateBack
+                onNavigateBack()
             }
             NewEntryEvent.Success -> {
                 context.showToastStr("Journal successfully created")
-                onNavigateBack
+                onNavigateBack()
             }
         }
     }
