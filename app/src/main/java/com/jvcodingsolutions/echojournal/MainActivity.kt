@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.buttons.PrimaryButton
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.bgGradient
+import com.jvcodingsolutions.echojournal.echos.presentation.echos.EchosScreenRoot
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,31 +30,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EchoJournalTheme {
-                Scaffold(
-                    containerColor = Color.Transparent,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.bgGradient)
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        PrimaryButton(
-                            text = "Primary Button",
-                            onClick = {},
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                )
-                            }
-                        )
-                    }
-
-                }
+                EchosScreenRoot()
             }
         }
     }

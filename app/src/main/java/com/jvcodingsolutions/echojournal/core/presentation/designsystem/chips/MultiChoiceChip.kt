@@ -36,19 +36,19 @@ fun MultiChoiceChip(
     displayText: String,
     onClick: () -> Unit,
     isClearVisible: Boolean,
-    modifier: Modifier = Modifier,
     onClearButtonClick: () -> Unit,
     isHighlighted: Boolean,
     isDropDownVisible: Boolean,
     dropDownMenu: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     leadingContent: (@Composable () -> Unit)? = null
 ) {
-    val containerColor = if (isHighlighted) {
+    val containerColor = if(isHighlighted) {
         MaterialTheme.colorScheme.surface
     } else {
         Color.Transparent
     }
-    val borderColor = if (isHighlighted) {
+    val borderColor = if(isHighlighted) {
         MaterialTheme.colorScheme.primaryContainer
     } else {
         MaterialTheme.colorScheme.outline
@@ -67,7 +67,8 @@ fun MultiChoiceChip(
             .clip(CircleShape)
             .border(
                 width = 0.5.dp,
-                color = borderColor
+                color = borderColor,
+                shape = CircleShape
             )
             .background(containerColor)
             .clickable(onClick = onClick)
@@ -88,7 +89,7 @@ fun MultiChoiceChip(
                 color = MaterialTheme.colorScheme.secondary
             )
             AnimatedVisibility(
-                visible = isClearVisible,
+                visible = isClearVisible
             ) {
                 IconButton(
                     onClick = onClearButtonClick,
@@ -100,33 +101,27 @@ fun MultiChoiceChip(
                         contentDescription = stringResource(R.string.clear_selections),
                         tint = MaterialTheme.colorScheme.secondaryContainer
                     )
-
                 }
             }
-
+        }
+        if(isDropDownVisible) {
+            dropDownMenu()
         }
     }
-
 }
 
 @Preview
 @Composable
-fun MultiChoiceChipPreview() {
+private fun MultiChoiceChipPreview() {
     EchoJournalTheme {
         MultiChoiceChip(
             displayText = "All topics",
             onClick = {},
             isClearVisible = true,
             onClearButtonClick = {},
-            isHighlighted = true,
+            isHighlighted = false,
             isDropDownVisible = true,
             dropDownMenu = {},
-            leadingContent = {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                )
-            },
         )
     }
 }
