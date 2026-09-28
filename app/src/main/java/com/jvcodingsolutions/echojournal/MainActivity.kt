@@ -23,6 +23,7 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.buttons.
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.bgGradient
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.EchosScreenRoot
+import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoExpandableText
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +31,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EchoJournalTheme {
-                EchosScreenRoot()
+                //EchosScreenRoot()
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    EchoExpandableText(
+                        text = buildString {
+                            repeat(100) {
+                                append("Hello ")
+                            }
+                        }
+                    )
+                }
+
             }
         }
     }
