@@ -87,6 +87,8 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
+    implementation(libs.kotlinx.datetime)
+
     implementation(libs.androidx.material.icons.extended)
 
 }
