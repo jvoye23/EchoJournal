@@ -23,6 +23,7 @@ kotlinxDatetime = "0.8.0"
 timber = "5.0.1"
 ui = "1.12.1"
 foundationLayout = "1.12.1"
+foundation = "1.12.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -75,6 +76,7 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [bundles]
 widget-glance = ["androidx-glance-appwidget", "androidx-glance-material3"]
