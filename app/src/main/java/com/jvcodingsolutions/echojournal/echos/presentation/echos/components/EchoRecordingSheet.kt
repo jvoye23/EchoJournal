@@ -42,6 +42,7 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Ec
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Microphone
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Pause
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.buttonGradient
+import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.buttonGradientPressed
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.primary90
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.primary95
 
@@ -165,7 +166,11 @@ fun SheetContent(
                     )
                     .padding(16.dp)
                     .background(
-                        brush = MaterialTheme.colorScheme.buttonGradient,
+                        brush = if (isPressed) {
+                            MaterialTheme.colorScheme.buttonGradientPressed
+                        } else {
+                            MaterialTheme.colorScheme.buttonGradient
+                        },
                         shape = CircleShape
                     )
                     .clip(CircleShape)
