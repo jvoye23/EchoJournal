@@ -1,5 +1,8 @@
 package com.jvcodingsolutions.echojournal.echos.presentation.echos
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +20,39 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.bgGradient
+import com.jvcodingsolutions.echojournal.core.presentation.util.ObserveAsEvents
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoList
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoRecordFloatingActionButton
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchosEmptyBackground
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchosTopBar
+import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 
 @Composable
 fun EchosScreenRoot(
     viewModel: EchosViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted && state.currentCaptureMethod == AudioCaptureMethod.STANDARD) {
+            viewModel.onAction(EchosAction.OnAudioPermissionGranted)
+        }
+
+
+    }
+
+    ObserveAsEvents(viewModel.events) {event ->
+        when (event) {
+            EchosEvent.RequestAudioPermission -> {
+                permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+
+            }
+        }
+
+    }
 
     EchosScreen(
         state = state,
