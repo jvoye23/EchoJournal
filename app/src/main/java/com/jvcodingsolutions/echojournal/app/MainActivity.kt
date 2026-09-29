@@ -26,15 +26,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EchoJournalTheme {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 50.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    EchosScreenRoot()
-                }
+                EchosScreenRoot()
             }
         }
     }

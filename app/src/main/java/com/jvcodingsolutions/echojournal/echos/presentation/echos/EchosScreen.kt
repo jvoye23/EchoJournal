@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.bgGradient
 import com.jvcodingsolutions.echojournal.core.presentation.util.ObserveAsEvents
@@ -27,10 +26,11 @@ import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.Ech
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchosEmptyBackground
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchosTopBar
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.AudioCaptureMethod
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EchosScreenRoot(
-    viewModel: EchosViewModel = viewModel()
+    viewModel: EchosViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
