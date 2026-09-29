@@ -1,5 +1,7 @@
 package com.jvcodingsolutions.echojournal.echos.presentation.echos
 
-sealed interface EchosEvent {
+interface EchosEvent {
     data object RequestAudioPermission: EchosEvent
+    data object RecordingTooShort: EchosEvent
+    data object OnDoneRecording: EchosEvent
 }
