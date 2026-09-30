@@ -8,7 +8,6 @@ sealed interface CreateEchoAction {
     data class OnTitleTextChange(val text: String): CreateEchoAction
     data class OnAddTopicTextChange(val text: String): CreateEchoAction
     data class OnNoteTextChange(val text: String): CreateEchoAction
-    data object ShowMoodSelector: CreateEchoAction
     data object OnDismissMoodSelector: CreateEchoAction
     data object OnSelectMoodClick: CreateEchoAction
     data class OnMoodClick(val moodUi: MoodUi): CreateEchoAction
