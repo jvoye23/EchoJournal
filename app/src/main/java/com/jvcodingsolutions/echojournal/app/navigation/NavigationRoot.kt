@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.jvcodingsolutions.echojournal.echos.presentation.createecho.CreateEchoScreenRoot
+import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.CreateEchoScreenRoot
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.EchosScreenRoot
 import com.jvcodingsolutions.echojournal.echos.presentation.util.toCreateEchoRoute
 
