@@ -55,6 +55,7 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Ec
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary70
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary95
 import com.jvcodingsolutions.echojournal.echos.presentation.components.EchoMoodPlayer
+import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.EchoTopicsRow
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.SelectMoodSheet
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
 
@@ -189,7 +190,25 @@ fun CreateEchoScreen(
                 }
             )
 
-            //TODO: Insert TopicsFlowRow
+            EchoTopicsRow(
+                topics = state.topics,
+                addTopicText = state.addTopicText,
+                showCreateTopicOption = state.showCreateTopicOption,
+                showTopicSuggestions = state.showTopicSuggestions,
+                searchResults = state.searchResults,
+                onTopicClick = {
+                    onAction(CreateEchoAction.OnTopicClick(it))
+                },
+                onDismissTopicSuggestions = {
+                    onAction(CreateEchoAction.OnDismissTopicSuggestions)
+                },
+                onRemoveTopicClick = {
+                    onAction(CreateEchoAction.OnRemoveTopicClick(it))
+                },
+                onAddTopicTextChange = {
+                    onAction(CreateEchoAction.OnAddTopicTextChange(it))
+                }
+            )
 
             Row(
                 modifier = Modifier
