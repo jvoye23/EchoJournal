@@ -28,6 +28,7 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Ec
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.bgGradient
 import com.jvcodingsolutions.echojournal.core.presentation.util.ObserveAsEvents
 import com.jvcodingsolutions.echojournal.core.presentation.util.isAppInForeground
+import com.jvcodingsolutions.echojournal.echos.domain.recording.RecordingDetails
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoList
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.EchoQuickRecordFloatingActionButton
@@ -37,11 +38,11 @@ import com.jvcodingsolutions.echojournal.echos.presentation.echos.components.Ech
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.RecordingState
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun EchosScreenRoot(
+    onNavigateToCreateEcho: (RecordingDetails) -> Unit,
     viewModel: EchosViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -70,7 +71,7 @@ fun EchosScreenRoot(
                 ).show()
             }
             is EchosEvent.OnDoneRecording -> {
-                Timber.d("Recording successful!")
+                onNavigateToCreateEcho(event.recordingDetails)
             }
         }
     }
