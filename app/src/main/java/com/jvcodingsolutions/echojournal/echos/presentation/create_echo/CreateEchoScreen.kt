@@ -55,6 +55,7 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.Ec
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary70
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary95
 import com.jvcodingsolutions.echojournal.echos.presentation.components.EchoMoodPlayer
+import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.SelectMoodSheet
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
 
 @Composable
@@ -257,8 +258,22 @@ fun CreateEchoScreen(
                         )
                     }
                 )
-
             }
+        }
+
+        if(state.showMoodSelector) {
+            SelectMoodSheet(
+                selectedMood = state.selectedMood,
+                onMoodClick = {
+                    onAction(CreateEchoAction.OnMoodClick(it))
+                },
+                onDismiss = {
+                    onAction(CreateEchoAction.OnDismissMoodSelector)
+                },
+                onConfirmClick = {
+                    onAction(CreateEchoAction.OnConfirmMood)
+                }
+            )
         }
     }
 }
