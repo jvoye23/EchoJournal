@@ -1,4 +1,5 @@
 package com.jvcodingsolutions.echojournal.echos.presentation.create_echo
 
-interface CreateEchoEvent {
+sealed interface CreateEchoEvent {
+    data object FailedToSaveFile: CreateEchoEvent
 }

@@ -2,6 +2,8 @@
 
 package com.jvcodingsolutions.echojournal.echos.presentation.create_echo
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -42,6 +44,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -58,18 +61,34 @@ import com.jvcodingsolutions.echojournal.core.presentation.designsystem.textfiel
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary70
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.secondary95
+import com.jvcodingsolutions.echojournal.core.presentation.util.ObserveAsEvents
 import com.jvcodingsolutions.echojournal.echos.presentation.components.EchoMoodPlayer
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.EchoTopicsRow
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.SelectMoodSheet
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun CreateEchoScreenRoot(
     onConfirmLeave: () -> Unit,
     viewModel: CreateEchoViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is CreateEchoEvent.FailedToSaveFile -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_couldnt_save_file),
+                    Toast.LENGTH_LONG
+                ).show()
+                onConfirmLeave()
+            }
+        }
+    }
 
     CreateEchoScreen(
         state = state,
