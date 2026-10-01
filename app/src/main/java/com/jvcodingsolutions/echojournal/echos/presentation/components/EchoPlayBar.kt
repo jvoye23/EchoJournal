@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
+import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
 import kotlin.random.Random
 
