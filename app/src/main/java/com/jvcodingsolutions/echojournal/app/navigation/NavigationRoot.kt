@@ -1,6 +1,7 @@
 package com.jvcodingsolutions.echojournal.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -16,6 +17,9 @@ fun NavigationRoot() {
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
+        entryDecorators = listOf(
+            rememberViewModelStoreNavEntryDecorator()
+        ),
         entryProvider = { key ->
             when (key) {
                 is NavigationRoute.EchosNavKey -> NavEntry(key) {
@@ -28,7 +32,11 @@ fun NavigationRoot() {
                 }
 
                 is NavigationRoute.CreateEchoNavKey -> NavEntry(key) {
-                    CreateEchoScreenRoot()
+                    CreateEchoScreenRoot(
+                        onConfirmLeave = {
+                            backStack.removeLastOrNull()
+                        }
+                    )
                 }
 
                 else -> {

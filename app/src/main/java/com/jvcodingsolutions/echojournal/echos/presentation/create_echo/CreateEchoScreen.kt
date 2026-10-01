@@ -2,6 +2,7 @@
 
 package com.jvcodingsolutions.echojournal.echos.presentation.create_echo
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -30,6 +32,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -43,6 +46,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,25 +62,34 @@ import com.jvcodingsolutions.echojournal.echos.presentation.components.EchoMoodP
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.EchoTopicsRow
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.components.SelectMoodSheet
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CreateEchoScreenRoot(
-    viewModel: CreateEchoViewModel = viewModel(),
+    onConfirmLeave: () -> Unit,
+    viewModel: CreateEchoViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CreateEchoScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onConfirmLeave = onConfirmLeave
     )
 }
 
 @Composable
 fun CreateEchoScreen(
     state: CreateEchoState,
+    onConfirmLeave: () -> Unit,
     onAction: (CreateEchoAction) -> Unit,
-    modifier: Modifier = Modifier
 ) {
+    BackHandler(
+        enabled = !state.showConfirmLeaveDialog
+    ) {
+        onAction(CreateEchoAction.OnGoBack)
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
@@ -84,7 +97,7 @@ fun CreateEchoScreen(
                 title = {
                     Text(
                         text = stringResource(R.string.new_entry),
-                        style = MaterialTheme.typography.titleLarge
+                        textAlign = TextAlign.Center
                     )
                 },
                 navigationIcon = {
@@ -101,7 +114,6 @@ fun CreateEchoScreen(
                 }
             )
         }
-
     ) { innerPadding ->
         val descriptionFocusRequester = remember {
             FocusRequester()
@@ -220,8 +232,7 @@ fun CreateEchoScreen(
                     imageVector = Icons.Filled.Create,
                     contentDescription = stringResource(R.string.add_description),
                     tint = MaterialTheme.colorScheme.outlineVariant,
-                    modifier = Modifier
-                        .size(16.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 TransparentHintTextField(
                     text = state.noteText,
@@ -240,11 +251,9 @@ fun CreateEchoScreen(
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Done
                     )
-
-
                 )
-
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -260,7 +269,6 @@ fun CreateEchoScreen(
                     modifier = Modifier
                         .fillMaxHeight()
                 )
-
                 PrimaryButton(
                     text = stringResource(R.string.save),
                     onClick = {
@@ -273,7 +281,7 @@ fun CreateEchoScreen(
                             imageVector = Icons.Default.Check,
                             contentDescription = stringResource(R.string.save),
                             modifier = Modifier
-                                .size(18.dp)
+                                .size(16.dp)
                         )
                     }
                 )
@@ -294,19 +302,57 @@ fun CreateEchoScreen(
                 }
             )
         }
+
+        if(state.showConfirmLeaveDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    onAction(CreateEchoAction.OnDismissConfirmLeaveDialog)
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = onConfirmLeave,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.discard),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            onAction(CreateEchoAction.OnDismissConfirmLeaveDialog)
+                        },
+                    ) {
+                        Text(text = stringResource(R.string.cancel))
+                    }
+                },
+                title = {
+                    Text(
+                        text = stringResource(R.string.discard_recording)
+                    )
+                },
+                text = {
+                    Text(
+                        text = stringResource(R.string.this_cannot_be_undone)
+                    )
+                }
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun CreateEchoScreenPreview() {
+private fun Preview() {
     EchoJournalTheme {
         CreateEchoScreen(
             state = CreateEchoState(
                 mood = MoodUi.EXCITED,
                 canSaveEcho = true
             ),
-            onAction = {}
+            onAction = {},
+            onConfirmLeave = {}
         )
     }
 }
