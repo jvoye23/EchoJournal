@@ -11,8 +11,6 @@ sealed interface NavigationRoute {
     data class CreateEchoNavKey(
         val recordingPath: String,
         val duration: Long,
-        val amplitudes: String
+        val amplitudes: String,
     ): NavKey
-
-
 }
