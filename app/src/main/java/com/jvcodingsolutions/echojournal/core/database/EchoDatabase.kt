@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.jvcodingsolutions.echojournal.core.database.echo.EchoDao
 import com.jvcodingsolutions.echojournal.core.database.echo.EchoEntity
 import com.jvcodingsolutions.echojournal.core.database.echo.FloatListTypeConverter
-import com.jvcodingsolutions.echojournal.core.database.echo.MoodUiTypeConverter
+import com.jvcodingsolutions.echojournal.core.database.echo.MoodTypeConverter
 import com.jvcodingsolutions.echojournal.core.database.echo_topic_relation.EchoTopicCrossRef
 import com.jvcodingsolutions.echojournal.core.database.topic.TopicEntity
 
@@ -15,7 +15,7 @@ import com.jvcodingsolutions.echojournal.core.database.topic.TopicEntity
     version = 1,
 )
 @TypeConverters(
-    MoodUiTypeConverter::class,
+    MoodTypeConverter::class,
     FloatListTypeConverter::class
 )
 abstract class EchoDatabase: RoomDatabase() {
