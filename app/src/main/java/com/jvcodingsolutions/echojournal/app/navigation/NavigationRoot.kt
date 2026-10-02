@@ -9,6 +9,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.CreateEchoScreenRoot
 import com.jvcodingsolutions.echojournal.echos.presentation.create_echo.CreateEchoViewModel
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.EchosScreenRoot
+import com.jvcodingsolutions.echojournal.echos.presentation.settings.SettingsScreenRoot
 import com.jvcodingsolutions.echojournal.echos.presentation.util.toCreateEchoRoute
 import com.jvcodingsolutions.echojournal.echos.presentation.util.toRecordingDetails
 import org.koin.compose.viewmodel.koinViewModel
@@ -32,6 +33,9 @@ fun NavigationRoot() {
                     EchosScreenRoot(
                         onNavigateToCreateEcho = { recordingDetails ->
                             backStack.add(recordingDetails.toCreateEchoRoute())
+                        },
+                        onNavigateToSettings = {
+                            backStack.add(NavigationRoute.SettingsNavKey)
                         }
                     )
                 }
@@ -46,6 +50,12 @@ fun NavigationRoot() {
                             backStack.removeLastOrNull()
                         },
                         viewModel = createEchoViewModel,
+                    )
+                }
+
+                is NavigationRoute.SettingsNavKey -> NavEntry(key) {
+                    SettingsScreenRoot(
+                        onGoBack = { backStack.removeLastOrNull() }
                     )
                 }
 

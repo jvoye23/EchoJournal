@@ -134,8 +134,6 @@ class EchosViewModel(
                 startRecording(captureMethod = AudioCaptureMethod.QUICK)
             }
 
-            EchosAction.OnSettingsClick -> {}
-
             is EchosAction.OnRemoveFilters -> {
                 when (action.filterType) {
                     EchoFilterChip.MOODS -> selectedMoodFilters.update { emptyList() }
@@ -192,6 +190,8 @@ class EchosViewModel(
             EchosAction.OnCompleteRecording -> stopRecording()
 
             EchosAction.OnResumeRecordingClick -> resumeRecording()
+
+            else -> Unit
         }
     }
 
