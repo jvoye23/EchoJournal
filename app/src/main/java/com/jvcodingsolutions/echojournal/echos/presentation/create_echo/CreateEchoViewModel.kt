@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.dropdowns.Selectable.Companion.asUnselectedItems
 import com.jvcodingsolutions.echojournal.echos.domain.audio.AudioPlayer
+import com.jvcodingsolutions.echojournal.echos.domain.echo.Echo
+import com.jvcodingsolutions.echojournal.echos.domain.echo.EchoDataSource
+import com.jvcodingsolutions.echojournal.echos.domain.echo.Mood
 import com.jvcodingsolutions.echojournal.echos.domain.recording.RecordingDetails
 import com.jvcodingsolutions.echojournal.echos.domain.recording.RecordingStorage
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.PlaybackState
@@ -30,13 +33,15 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 import kotlin.time.Duration
 
 class CreateEchoViewModel(
+    private val savedStateHandle: SavedStateHandle,
     private val recordingDetails: RecordingDetails,
     private val recordingStorage: RecordingStorage,
     private val audioPlayer: AudioPlayer,
-    private val savedStateHandle: SavedStateHandle
+    private val echoDataSource: EchoDataSource
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -156,7 +161,7 @@ class CreateEchoViewModel(
     }
 
     private fun onSaveClick() {
-        if(recordingDetails.filePath == null) {
+        if(recordingDetails.filePath == null || !state.value.canSaveEcho) {
             return
         }
 
@@ -169,7 +174,24 @@ class CreateEchoViewModel(
                 return@launch
             }
 
-            // TODO: Echo
+            val currentState = state.value
+
+            // we use the recordingDetails.amplitudes and not the normalized amplitudes
+            val echo = Echo(
+                mood = currentState.mood?.let {
+                    Mood.valueOf(it.name)
+                } ?: throw IllegalStateException("Mood must be set before saving echo"),
+                title = currentState.titleText.trim(),
+                note = currentState.noteText.ifBlank { null },
+                topics = currentState.topics,
+                audioFilePath = savedFilePath,
+                audioPlaybackLength = currentState.playbackTotalDuration,
+                audioAmplitudes = recordingDetails.amplitudes,
+                recordedAt = Clock.System.now(),
+            )
+
+            echoDataSource.insertEcho(echo)
+            eventChannel.send(CreateEchoEvent.EchoSuccessfullySaved)
         }
     }
 
