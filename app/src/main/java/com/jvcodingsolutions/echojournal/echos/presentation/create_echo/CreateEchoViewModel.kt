@@ -2,6 +2,7 @@
 
 package com.jvcodingsolutions.echojournal.echos.presentation.create_echo
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.dropdowns.Selectable.Companion.asUnselectedItems
@@ -34,15 +35,23 @@ import kotlin.time.Duration
 class CreateEchoViewModel(
     private val recordingDetails: RecordingDetails,
     private val recordingStorage: RecordingStorage,
-    private val audioPlayer: AudioPlayer
+    private val audioPlayer: AudioPlayer,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
     private val eventChannel = Channel<CreateEchoEvent>()
     val events = eventChannel.receiveAsFlow()
 
+    private val restoredTopics = savedStateHandle.get<String>("topics")?.split(",")?.filter { it.isNotBlank() }
     private val _state = MutableStateFlow(CreateEchoState(
-        playbackTotalDuration = recordingDetails.duration
+        playbackTotalDuration = recordingDetails.duration,
+        titleText = savedStateHandle.get<String>("titleText") ?: "",
+        noteText = savedStateHandle.get<String>("noteText") ?: "",
+        topics = restoredTopics ?: emptyList(),
+        mood = savedStateHandle.get<String>("mood")?.let { MoodUi.valueOf(it) },
+        showMoodSelector = savedStateHandle.get<String>("mood") == null,
+        canSaveEcho = savedStateHandle.get<Boolean>("canSaveEcho") == true,
     ))
     val state = _state
         .onStart {
@@ -51,10 +60,17 @@ class CreateEchoViewModel(
                 hasLoadedInitialData = true
             }
         }
+        .onEach { state ->
+            savedStateHandle["titleText"] = state.titleText
+            savedStateHandle["noteText"] = state.noteText
+            savedStateHandle["topics"] = state.topics.joinToString(",")
+            savedStateHandle["mood"] = state.mood?.name
+            savedStateHandle["canSaveEcho"] = state.canSaveEcho
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = CreateEchoState()
+            initialValue = _state.value
         )
 
     private var durationJob: Job? = null
@@ -66,7 +82,7 @@ class CreateEchoViewModel(
             CreateEchoAction.OnDismissMoodSelector -> onDismissMoodSelector()
             CreateEchoAction.OnDismissTopicSuggestions -> onDismissTopicSuggestions()
             is CreateEchoAction.OnMoodClick -> onMoodClick(action.moodUi)
-            is CreateEchoAction.OnNoteTextChange -> {}
+            is CreateEchoAction.OnNoteTextChange -> onNoteTextChange(action.text)
             CreateEchoAction.OnPauseAudioClick -> audioPlayer.pause()
             CreateEchoAction.OnPlayAudioClick -> onPlayAudioClick()
             is CreateEchoAction.OnRemoveTopicClick -> onRemoveTopicClick(action.topic)
@@ -80,6 +96,13 @@ class CreateEchoViewModel(
             CreateEchoAction.OnNavigateBackClick,
             CreateEchoAction.OnGoBack -> onShowConfirmLeaveDialog()
         }
+    }
+
+    private fun onNoteTextChange(text: String) {
+        _state.update { it.copy(
+            noteText = text,
+            canSaveEcho = text.isNotBlank() && it.mood != null
+        ) }
     }
 
     private fun onPlayAudioClick() {
