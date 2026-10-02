@@ -3,6 +3,7 @@ package com.jvcodingsolutions.echojournal.app
 import android.app.Application
 import com.jvcodingsolutions.echojournal.BuildConfig
 import com.jvcodingsolutions.echojournal.app.di.appModule
+import com.jvcodingsolutions.echojournal.core.database.di.databaseModule
 import com.jvcodingsolutions.echojournal.echos.di.echoModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +26,9 @@ class EchoJournalApp: Application() {
             androidContext(this@EchoJournalApp)
             modules(
                 appModule,
-                echoModule
+                echoModule,
+                databaseModule
             )
         }
     }
-
 }
