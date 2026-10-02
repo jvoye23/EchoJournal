@@ -6,6 +6,7 @@ import com.jvcodingsolutions.echojournal.R
 import com.jvcodingsolutions.echojournal.core.presentation.designsystem.dropdowns.Selectable
 import com.jvcodingsolutions.echojournal.core.presentation.util.UiText
 import com.jvcodingsolutions.echojournal.echos.domain.audio.AudioPlayer
+import com.jvcodingsolutions.echojournal.echos.domain.echo.Echo
 import com.jvcodingsolutions.echojournal.echos.domain.echo.EchoDataSource
 import com.jvcodingsolutions.echojournal.echos.domain.recording.VoiceRecorder
 import com.jvcodingsolutions.echojournal.echos.presentation.echos.models.AudioCaptureMethod
@@ -18,7 +19,6 @@ import com.jvcodingsolutions.echojournal.echos.presentation.models.EchoUi
 import com.jvcodingsolutions.echojournal.echos.presentation.models.MoodUi
 import com.jvcodingsolutions.echojournal.echos.presentation.util.AmplitudeNormalizer
 import com.jvcodingsolutions.echojournal.echos.presentation.util.toEchoUi
-import com.jvcodingsolutions.echojournal.echos.presentation.util.toReadableTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -39,14 +39,11 @@ import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -88,8 +85,9 @@ class EchosViewModel(
 
     // Using this in a background thread with Dispatchers.Default, since the mapping and
     // normalizing of all amplitudes is CPU heavy and should not be done on the main thread
-    private val echos = echoDataSource
+    private val filteredEchos = echoDataSource
         .observeEchos()
+        .filterByMoodAndTopics()
         .onEach { echos ->
             _state.update { it.copy(
                 hasEchosRecorded = echos.isNotEmpty(),
@@ -199,7 +197,7 @@ class EchosViewModel(
 
     private fun observeEchos() {
         combine(
-            echos,
+            filteredEchos,
             playingEchoId,
             audioPlayer.activeTrack
         ) { echos, playingEchoId, activeTrack ->
@@ -358,15 +356,16 @@ class EchosViewModel(
 
     private fun observeFilters() {
         combine(
+            echoDataSource.observeTopics(),
             selectedTopicFilters,
             selectedMoodFilters
-        ) { selectedTopics, selectedMoods ->
+        ) { allTopics ,selectedTopics, selectedMoods ->
             _state.update {
                 it.copy(
-                    topics = it.topics.map { selectableTopic ->
+                    topics = allTopics.map { topic ->
                         Selectable(
-                            item = selectableTopic.item,
-                            selected = selectedTopics.contains(selectableTopic.item)
+                            item = topic,
+                            selected = selectedTopics.contains(topic)
                         )
                     },
                     moods = MoodUi.entries.map {
@@ -427,6 +426,27 @@ class EchosViewModel(
                         uiTexts = moodNames.take(2).toTypedArray()
                     )
                 )
+            }
+        }
+    }
+
+    private fun Flow<List<Echo>>.filterByMoodAndTopics(): Flow<List<Echo>> {
+        return combine(
+            this,
+            selectedMoodFilters,
+            selectedTopicFilters
+        ) { echos, moodFilters, topicFilters ->
+            echos.filter { echo ->
+                val matchesMoodFilter = moodFilters
+                    .takeIf { it.isNotEmpty() }
+                    ?.any { it.name == echo.mood.name }
+                    ?: true
+                val matchesTopicFilter = topicFilters
+                    .takeIf { it.isNotEmpty() }
+                    ?.any { it in echo.topics }
+                    ?: true
+
+                matchesMoodFilter && matchesTopicFilter
             }
         }
     }
