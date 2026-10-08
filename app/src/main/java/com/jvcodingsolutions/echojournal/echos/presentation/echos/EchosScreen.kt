@@ -232,3 +232,18 @@ fun EchosScreenNoEchosRecordedPreview() {
         )
     }
 }
+
+@Preview
+@Composable
+fun EchosScreenNoEchosRecordedIsRecordingPreview() {
+    EchoJournalTheme {
+        EchosScreen(
+            state = EchosState(
+                isLoadingData = false,
+                hasEchosRecorded = false,
+                recordingState = RecordingState.NORMAL_CAPTURE
+            ),
+            onAction = {}
+        )
+    }
+}
